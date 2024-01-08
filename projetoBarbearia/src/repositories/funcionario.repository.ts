@@ -46,6 +46,10 @@ class FuncionarioRepository {
                 this.funcionarioDB.forEach(element => {
                     if (element.id == funcionario.id) {
                         element.nome = funcionario.nome;
+                        element.telefone = funcionario.telefone;
+                        element.dataNascimento = funcionario.dataNascimento;
+                        element.cpf = funcionario.cpf;
+                        element.cnpj = funcionario.cnpj;
                         encontrado = true;
                     }
                 });

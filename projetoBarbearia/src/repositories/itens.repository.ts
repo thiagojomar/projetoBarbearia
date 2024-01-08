@@ -46,6 +46,8 @@ async retrieveById(itemId: number): Promise<Itens | null> {
           this.itensDB.forEach(element => {
               if (element.id == item.id) {
                   element.nome = item.nome;
+                  element.valor = item.valor;
+                  element.quantidade = item.quantidade;
                   encontrado = true;
               }
           });

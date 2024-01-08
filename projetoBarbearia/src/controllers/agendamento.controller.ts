@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { Agendamento } from "../models/agendamento";
 import agendamentoRepository from "../repositories/agendamento.repository";
+import { Itens } from "../models/itens";
+import itensRepository from "../repositories/itens.repository";
 
 export default class AgendamentoController {
     async create(req: Request, res: Response) {
@@ -13,7 +15,14 @@ export default class AgendamentoController {
 
         try {
             const agendamento: Agendamento = req.body;
-            if (!agendamento.published) agendamento.published = false;
+            agendamento.detalhamento.forEach(element => {
+              const itemTemp: Itens | null = await itensRepository.retrieveById(element.id);
+              if(itemTemp !== null){
+                element = itemTemp;
+              }
+            });     
+                          
+            
 
             const savedAgendamento = await agendamentoRepository.save(agendamento);
 

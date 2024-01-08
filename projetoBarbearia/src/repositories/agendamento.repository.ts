@@ -47,6 +47,10 @@ class AgendamentoRepository {
                 this.agendamendoDB.forEach(element => {
                     if (element.id == agendamento.id) {
                         element.cliente = agendamento.cliente;
+                        element.barbeiro = agendamento.barbeiro;
+                        element.data = agendamento.data;
+                        element.valorTotal = agendamento.valorTotal;
+                        element.detalhamento = agendamento.detalhamento;
                         encontrado = true;
                     }
                 });

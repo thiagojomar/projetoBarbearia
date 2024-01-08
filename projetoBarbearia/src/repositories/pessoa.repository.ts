@@ -46,6 +46,9 @@ class PessoaRepository {
                 this.pessoaDB.forEach(element => {
                     if (element.id == pessoa.id) {
                         element.nome = pessoa.nome;
+                        element.telefone = pessoa.telefone;
+                        element.dataNascimento = pessoa.dataNascimento;
+                        element.cpf = pessoa.cpf;
                         encontrado = true;
                     }
                 });
