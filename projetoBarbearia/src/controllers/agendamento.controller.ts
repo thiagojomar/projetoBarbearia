@@ -29,7 +29,7 @@ export default class AgendamentoController {
             res.status(201).send(savedAgendamento);
         } catch (err) {
             res.status(500).send({
-                message: "Erro ao tentar salvar um genero"
+                message: "Erro ao tentar salvar um item."
             });
         }
     }
