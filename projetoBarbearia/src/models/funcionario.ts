@@ -1,51 +1,29 @@
-import { Pessoa } from "./pessoa";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToOne,
+    JoinColumn,
+    OneToMany,
+    ManyToOne,
+} from 'typeorm';
+import { Agendamento } from './agendamento';
 
-export class funcionario extends Pessoa {
-    cnpj: string
+@Entity()
+export class Funcionario {
+    @PrimaryGeneratedColumn()
+    cnpj!: number;
 
-    constructor(id: number, nome: string, telefone: string, dataNascimento: string, cpf: string, cnpj: string) {
-        super(id, nome, telefone, dataNascimento, cpf)
-        this.cnpj = cnpj;
-    }
+    @Column({ length: 45, nullable: false })
+    nome!: string;
 
-    public toString(): string {
-        return super.toString() + ' CNPJ - ' + this.cnpj;
+    @Column({ length: 45, nullable: false })
+    telefone!: string;
 
-    }
+    @Column({ length: 45, nullable: false })
+    dataNascimento!: string;
 
-    getID(): number {
-        return this.id;
-    }
-
-    getNome(): string {
-        return this.nome;
-    }
-
-    setNome(novoNome: string): void {
-        this.nome = novoNome;
-    }
-
-    getTelefone(): string {
-        return this.telefone;
-    }
-
-    setTelefone(novoTelefone: string): void {
-        this.telefone = novoTelefone;
-    }
-
-    getdataNascimento(): string {
-        return this.dataNascimento;
-    }
-
-    setdataNascimento(novadataNascimento: string): void {
-        this.dataNascimento = novadataNascimento;
-    }
-
-    getCPF(): string {
-        return this.cpf;
-    }
-
-    getCNPJ(): string {
-        return this.cnpj;
-    }
+    @OneToOne(() => Agendamento, (agendamento) => agendamento.funcionario)
+    @JoinColumn({ name: 'Funcionario_cnpj' })
+    agendamento!: Agendamento;
 }

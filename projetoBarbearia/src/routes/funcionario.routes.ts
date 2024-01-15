@@ -22,8 +22,7 @@ class FuncionarioRoutes {
    this.router.put("/funcionario/atualizar/:id", this.controller.update);
    // Deleta um Funcionario pelo seu id
    this.router.delete("/funcionario/delete/:id", this.controller.delete);
-   // Deleta todos os Funcionarios
-   this.router.delete("/funcionarios/deleteall", this.controller.deleteAll);
+
   }
 }
 

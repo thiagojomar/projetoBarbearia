@@ -1,11 +1,14 @@
+import { AppDataSource } from "../db/data-source";
 import { Pessoa } from "../models/pessoa";
 
+
 class PessoaRepository {
-    pessoaDB = new Array<Pessoa>();
+  
+    pessoaRepository = AppDataSource.getRepository(Pessoa);
 
     async save(pessoa: Pessoa): Promise<Pessoa> {
         try {
-            this.pessoaDB.push(pessoa);
+            this.pessoaRepository.save(pessoa);
             return pessoa
         } catch (erro) {
             throw new Error("Falha ao criar a Pessoa.")
@@ -14,23 +17,18 @@ class PessoaRepository {
 
     async retrieveAll(): Promise<Array<Pessoa>> {
         try {
-            return this.pessoaDB;
+            return this.pessoaRepository.find();
         } catch (erro) {
             throw new Error("Falha ao retornar pessoa.");
         }
     }
 
-    async retrieveById(pessoaId: number): Promise<Pessoa | null> {
+    async retrieveById(pessoaCpf: number): Promise<Pessoa | null> {
         try {
-            var encontrado = false;
-            var pessoaEncontrado = null;
-            this.pessoaDB.forEach(element => {            
-                if (element.id == pessoaId) {
-                    pessoaEncontrado = element;
-                    encontrado = true;
-                }
-            });
-            if (encontrado) {
+            
+            var pessoaEncontrado = this.pessoaRepository.findOneBy({cpf: pessoaCpf});
+           
+            if (pessoaEncontrado) {
                 return pessoaEncontrado;
             } 
             return null;         
@@ -40,53 +38,29 @@ class PessoaRepository {
       }
       
           async update(pessoa: Pessoa): Promise<number> {
-            const { id, nome, telefone, dataNascimento, cpf, published } = pessoa;
+            const { nome, telefone, dataNascimento, cpf } = pessoa;
             try {
-                var encontrado = false;
-                this.pessoaDB.forEach(element => {
-                    if (element.id == pessoa.id) {
-                        element.nome = pessoa.nome;
-                        element.telefone = pessoa.telefone;
-                        element.dataNascimento = pessoa.dataNascimento;
-                        element.cpf = pessoa.cpf;
-                        encontrado = true;
-                    }
-                });
-                if (encontrado) {
-                    return 1;
-                } 
-                return 0;
-            } catch (error) {
-                throw new Error("Falha ao atualizar a Pessoa!");
-            }
-        }
-      
-            async delete(pessoaId: number): Promise<number> {
-              try {
-                  var encontrado = false;
-                  this.pessoaDB.forEach(element => {
-                      if (element.id == pessoaId) {
-                          this.pessoaDB.splice(this.pessoaDB.indexOf(element), 1);
-                          encontrado = true;
-                      }
-                  });
-                  if (encontrado) {
-                      return 1;
-                  } 
+                this.pessoaRepository.save(pessoa);
                   return 0;
               } catch (error) {
                   throw new Error("Falha ao deletar a Pessoa!");
               }
           }
-          async deleteAll(): Promise<number> {
+
+          async delete(pessoaCpf: number): Promise<number> {
             try {
-                let num = this.pessoaDB.length;
-                this.pessoaDB.splice(0, this.pessoaDB.length);
-                return num;
+                const pessoaEncontrado = await this.pessoaRepository.findOneBy({
+                    cpf: pessoaCpf});
+                if (pessoaEncontrado) {
+                    this.pessoaRepository.remove(pessoaEncontrado);
+                    return 1;
+                }
+                return 0;
             } catch (error) {
-                throw new Error("Falha ao deletar todas as Pessoas!");
+                throw new Error("Falha ao deletar o gênero!");
             }
         }
+          
 
 }
 

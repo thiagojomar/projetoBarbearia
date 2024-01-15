@@ -1,12 +1,14 @@
+import { AppDataSource } from "../db/data-source";
 import { Agendamento } from "../models/agendamento";
-
+AppDataSource
 
 class AgendamentoRepository {
-    agendamendoDB = new Array<Agendamento>();
+    
+    agendamentoRepository = AppDataSource.getRepository(Agendamento)
 
     async save(agendamento: Agendamento): Promise<Agendamento> {
         try {
-            this.agendamendoDB.push(agendamento);
+            this.agendamentoRepository.save(agendamento);
             return agendamento
         } catch (erro) {
             throw new Error("Falha ao criar Agendamento.")
@@ -15,7 +17,7 @@ class AgendamentoRepository {
 
     async retrieveAll(): Promise<Array<Agendamento>> {
         try {
-            return this.agendamendoDB;
+            return this.agendamentoRepository.find();
         } catch (erro) {
             throw new Error("Falha ao retornar todos os Agendamentos.");
         }
@@ -23,15 +25,8 @@ class AgendamentoRepository {
 
     async retrieveById(agendamentoId: number): Promise<Agendamento | null> {
         try {
-            var encontrado = false;
-            var agendamentoEncontrado = null;
-            this.agendamendoDB.forEach(element => {            
-                if (element.id == agendamentoId) {
-                  agendamentoEncontrado = element;
-                    encontrado = true;
-                }
-            });
-            if (encontrado) {
+            var agendamentoEncontrado = this.agendamentoRepository.findOneBy({idAgendamento: agendamentoId});
+             if (agendamentoEncontrado) {
                 return agendamentoEncontrado;
             } 
             return null;         
@@ -40,24 +35,10 @@ class AgendamentoRepository {
         }
       }
       
-          async update(agendamento: Agendamento): Promise<number> {
-            const { id, cliente, barbeiro, data, valorTotal, detalhamento, published } = agendamento;
+          async update(agendamento: Agendamento): Promise<void> {
+            const { idAgendamento, pessoa, funcionario, data, valor, itens } = agendamento;
             try {
-                var encontrado = false;
-                this.agendamendoDB.forEach(element => {
-                    if (element.id == agendamento.id) {
-                        element.cliente = agendamento.cliente;
-                        element.barbeiro = agendamento.barbeiro;
-                        element.data = agendamento.data;
-                        element.valorTotal = agendamento.valorTotal;
-                        element.detalhamento = agendamento.detalhamento;
-                        encontrado = true;
-                    }
-                });
-                if (encontrado) {
-                    return 1;
-                } 
-                return 0;
+                this.agendamentoRepository.save(agendamento);
             } catch (error) {
                 throw new Error("Falha ao atualizar o Agendamento!");
             }
@@ -65,14 +46,9 @@ class AgendamentoRepository {
       
             async delete(agendamentoId: number): Promise<number> {
               try {
-                  var encontrado = false;
-                  this.agendamendoDB.forEach(element => {
-                      if (element.id == agendamentoId) {
-                          this.agendamendoDB.splice(this.agendamendoDB.indexOf(element), 1);
-                          encontrado = true;
-                      }
-                  });
-                  if (encontrado) {
+                  const agendamentoEncontrado = await this.agendamentoRepository.findOneBy({idAgendamento: agendamentoId}); 
+                  if (agendamentoEncontrado) {
+                    this.agendamentoRepository.remove(agendamentoEncontrado)
                       return 1;
                   } 
                   return 0;
@@ -80,15 +56,7 @@ class AgendamentoRepository {
                   throw new Error("Falha ao deletar o Agendamento!");
               }
           }
-          async deleteAll(): Promise<number> {
-            try {
-                let num = this.agendamendoDB.length;
-                this.agendamendoDB.splice(0, this.agendamendoDB.length);
-                return num;
-            } catch (error) {
-                throw new Error("Falha ao deletar todos os Agendamentos!");
-            }
-        }
+          
 
 }
 

@@ -22,9 +22,8 @@ class AgendamentoRoutes {
  this.router.put("/agendamento/atualizar/:id", this.controller.update);
  // Deleta um agendamento pelo seu id
  this.router.delete("/agendamento/delete/:id", this.controller.delete);
- // Deleta todos os agendamentos
- this.router.delete("/agendamentos/deleteall", this.controller.deleteAll);
+
   }
 }
 
-export default new AgendamentoRoutes().router;
+export default new AgendamentoRoutes().router; 

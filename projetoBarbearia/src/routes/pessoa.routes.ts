@@ -22,8 +22,6 @@ class PessoaRoutes {
     this.router.put("/pessoa/atualizar/:id", this.controller.update);
     // Deleta uma Pessoa pelo seu id
     this.router.delete("/pessoa/delete/:id", this.controller.delete);
-    // Deleta todas as Pessoas
-    this.router.delete("/pessoas/deleteall", this.controller.deleteAll);
   }
 }
 

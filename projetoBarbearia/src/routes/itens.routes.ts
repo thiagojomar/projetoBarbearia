@@ -13,7 +13,7 @@ class ItensRoutes {
 
     //Create novo Item
     this.router.post("/item/cadastrar", this.controller.create);
-    //Retornar os Itens ja cadastrados
+    //Retornar os Itens ja cadastrados0
     this.router.get("/itens/listar", this.controller.findAll);
     // Retorna um item especifico pelo seu id
     this.router.get("/item/buscar/:id", this.controller.findOne);
@@ -21,8 +21,6 @@ class ItensRoutes {
     this.router.put("/item/atualizar/:id", this.controller.update);
     // Deleta um Item pelo seu id
     this.router.delete("/item/delete/:id", this.controller.delete);
-    // Deleta todos os Itens
-    this.router.delete("/itens/deleteall", this.controller.deleteAll);
 
   }
 }

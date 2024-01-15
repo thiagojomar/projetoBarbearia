@@ -1,0 +1,25 @@
+1 - npm init -y
+2 - npm i -D typescript
+3 - npm i -D tsx
+4 - npx tsc --init
+ 4.1 - no tsconfig atualizar:
+        a. No inicio inserir --> "include": ["./src"],
+        b. No "compilerOptions" descomentar a linha --> "outDir": "./build",
+5 - npx gitignore node
+6 - npm i -D ts-node-dev
+7 - Ajustar o package.json em "scripts" para:
+        "scripts": {
+            "test": "echo \"Error: no test specified\" && exit 1",
+            "dev": "ts-node-dev ./server.ts",
+            "start": "node build/server.js",
+            "build": "rimraf .build && tsc"
+        }
+8 - npm i express
+9 - npm i -D @types/express
+10 - npm i cors
+11 - npm i -D @types/cors
+----------------------------------------------------------------
+12 - npm i -D @types/node
+13 - npm install typeorm --save
+14 - npm install reflect-metadata --save
+15 - npm install mysql2 --save

@@ -1,10 +1,11 @@
-import { Itens } from "../models/itens";
+import { Item } from "../models/itens";
 import { Request, Response } from "express";
 import itensRepository from "../repositories/itens.repository";
 
 export default class ItensController {
+
   async create(req: Request, res: Response) {
-    if (!req.body.title) {
+    if (!req.body.nome) {
       res.status(400).send({
         message: "Não pode ser vazio!"
       });
@@ -12,24 +13,20 @@ export default class ItensController {
     }
 
     try {
-      const item: Itens = req.body;
-      if (!item.published) item.published = false;
-
+      const item: Item = req.body;
+      console.log(item);
       const savedItem = await itensRepository.save(item);
-
       res.status(201).send(savedItem);
     } catch (err) {
       res.status(500).send({
-        message: "Erro ao tentar salvar um genero"
+        message: "Erro ao tentar salvar um item"
       });
     }
   }
 
   async findAll(req: Request, res: Response) {
-
     try {
       const itens = await itensRepository.retrieveAll();
-
       res.status(200).send(itens);
     } catch (err) {
       res.status(500).send({
@@ -40,10 +37,8 @@ export default class ItensController {
   //atualização
   async findOne(req: Request, res: Response) {
     const id: number = parseInt(req.params.id);
-
     try {
       const item = await itensRepository.retrieveById(id);
-
       if (item) res.status(200).send(item);
       else
         res.status(404).send({
@@ -57,21 +52,11 @@ export default class ItensController {
   }
 
   async update(req: Request, res: Response) {
-    let item: Itens = req.body;
+    let item: Item = req.body;
     item.id = parseInt(req.params.id);
-
     try {
-      const num = await itensRepository.update(item);
-
-      if (num == 1) {
-        res.send({
-          message: "Item foi atualizado com sucesso."
-        });
-      } else {
-        res.send({
-          message: `Não foi possivel atualizar o Item com id=${item.id}. Talvez o Item não foi encontrado ou está vazio.`
-        });
-      }
+       await itensRepository.update(item);
+       
     } catch (err) {
       res.status(500).send({
         message: `Error ao atualizar o Item com id=${item.id}.`
@@ -81,10 +66,8 @@ export default class ItensController {
 
   async delete(req: Request, res: Response) {
     const id: number = parseInt(req.params.id);
-
     try {
       const num = await itensRepository.delete(id);
-
       if (num == 1) {
         res.send({
           message: "Item deletado com sucesso!"
@@ -101,15 +84,5 @@ export default class ItensController {
     }
   }
   
-  async deleteAll(req: Request, res: Response) {
-    try {
-      const num = await itensRepository.deleteAll();
-
-      res.send({ message: `${num} Itens foram deletados com sucesso!` });
-    } catch (err) {
-      res.status(500).send({
-        message: "Algum erro ocorreu enquato deletava todos os Itens."
-      });
-    }
-  }
+  
 }

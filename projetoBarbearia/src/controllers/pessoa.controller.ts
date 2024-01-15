@@ -4,7 +4,7 @@ import pessoaRepository from "../repositories/pessoa.repository";
 
 export default class PessoaController {
     async create(req: Request, res: Response) {
-        if (!req.body.title) {
+        if (!req.body.nome) {
             res.status(400).send({
                 message: "Não pode ser vazio!"
             });
@@ -13,8 +13,6 @@ export default class PessoaController {
 
         try {
             const pessoa: Pessoa = req.body;
-            if (!pessoa.published) pessoa.published = false;
-
             const savedPessoa = await pessoaRepository.save(pessoa);
 
             res.status(201).send(savedPessoa);
@@ -39,26 +37,26 @@ export default class PessoaController {
       }
 
       async findOne(req: Request, res: Response) {
-        const id: number = parseInt(req.params.id);
+        const cpf: number = parseInt(req.params.cpf);
     
         try {
-          const item = await pessoaRepository.retrieveById(id);
+          const item = await pessoaRepository.retrieveById(cpf);
     
           if (item) res.status(200).send(item);
           else
             res.status(404).send({
-              message: `Não foi encontrado nenhuma Pessoa com esse id=${id}.`
+              message: `Não foi encontrado nenhuma Pessoa com esse id=${cpf}.`
             });
         } catch (err) {
           res.status(500).send({
-            message: `Error não foi possivel retornar nenhuma Pessoa com id=${id}.`
+            message: `Error não foi possivel retornar nenhuma Pessoa com id=${cpf}.`
           });
         }
       }
     
       async update(req: Request, res: Response) {
         let pessoa: Pessoa = req.body;
-        pessoa.id = parseInt(req.params.id);
+        pessoa.cpf = parseInt(req.params.cpf);
     
         try {
           const num = await pessoaRepository.update(pessoa);
@@ -69,21 +67,21 @@ export default class PessoaController {
             });
           } else {
             res.send({
-              message: `Não foi possivel atualizar a Pessoa com id=${pessoa.id}. Talvez a Pessoa não foi encontrado ou está vazio.`
+              message: `Não foi possivel atualizar a Pessoa com id=${pessoa.cpf}. Talvez a Pessoa não foi encontrado ou está vazio.`
             });
           }
         } catch (err) {
           res.status(500).send({
-            message: `Error ao atualizar o Pessoa com id=${pessoa.id}.`
+            message: `Error ao atualizar o Pessoa com id=${pessoa.cpf}.`
           });
         }
       }
     
       async delete(req: Request, res: Response) {
-        const id: number = parseInt(req.params.id);
+        const cpf: number = parseInt(req.params.cpf);
     
         try {
-          const num = await pessoaRepository.delete(id);
+          const num = await pessoaRepository.delete(cpf);
     
           if (num == 1) {
             res.send({
@@ -91,25 +89,16 @@ export default class PessoaController {
             });
           } else {
             res.send({
-              message: `Não foi possível deletar a Pessoa com id=${id}. Talvez a Pessoa não tenha sido encontrada.`,
+              message: `Não foi possível deletar a Pessoa com id=${cpf}. Talvez a Pessoa não tenha sido encontrada.`,
             });
           }
         } catch (err) {
           res.status(500).send({
-            message: `A Pessoa com id==${id}, não pode ser deletado.`
+            message: `A Pessoa com id==${cpf}, não pode ser deletado.`
           });
         }
       }
       
-      async deleteAll(req: Request, res: Response) {
-        try {
-            const num = await pessoaRepository.deleteAll();
-    
-            res.send({ message: `${num} Pessoas foram deletadas com sucesso!` });
-        } catch (err) {
-            res.status(500).send({
-                message: "Algum erro ocorreu enquato deletava todos as Pessoas."
-            });
-        }
+      
     }
-}
+

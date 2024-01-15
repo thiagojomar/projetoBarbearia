@@ -1,36 +1,32 @@
-import { funcionario } from "../models/funcionario";
+import { AppDataSource } from "../db/data-source";
+import { Funcionario } from "../models/funcionario";
 
 class FuncionarioRepository {
-    funcionarioDB = new Array<funcionario>();
 
-    async save(funcionario: funcionario): Promise<funcionario> {
+    funcionarioRepository = AppDataSource.getRepository(Funcionario);
+
+    async save(funcionario: Funcionario): Promise<Funcionario> {
         try {
-            this.funcionarioDB.push(funcionario);
-            return funcionario
+            this.funcionarioRepository.save(funcionario);
+            return funcionario;
         } catch (erro) {
             throw new Error("Falha ao criar item.")
         }
     }
 
-    async retrieveAll(): Promise<Array<funcionario>> {
+    async retrieveAll(): Promise<Array<Funcionario>> {
         try {
-            return this.funcionarioDB;
+            return this.funcionarioRepository.find();
         } catch (erro) {
             throw new Error("Falha ao retornar itens.");
         }
     }
 
-    async retrieveById(funcionarioId: number): Promise<funcionario | null> {
+    async retrieveById(funcionarioCnpj: number): Promise<Funcionario | null> {
         try {
-            var encontrado = false;
-            var funcionarioEncontrado = null;
-            this.funcionarioDB.forEach(element => {            
-                if (element.id == funcionarioId) {
-                  funcionarioEncontrado = element;
-                    encontrado = true;
-                }
-            });
-            if (encontrado) {
+            var funcionarioEncontrado = this.funcionarioRepository.findOneBy({cnpj: funcionarioCnpj});
+            
+            if (funcionarioEncontrado) {
                 return funcionarioEncontrado;
             } 
             return null;         
@@ -39,39 +35,21 @@ class FuncionarioRepository {
         }
       }
       
-          async update(funcionario: funcionario): Promise<number> {
-            const { id, nome, telefone, dataNascimento, cpf, cnpj, published } = funcionario;
+          async update(funcionario: Funcionario) {
+            const { cnpj, nome, telefone, dataNascimento } = funcionario;
             try {
-                var encontrado = false;
-                this.funcionarioDB.forEach(element => {
-                    if (element.id == funcionario.id) {
-                        element.nome = funcionario.nome;
-                        element.telefone = funcionario.telefone;
-                        element.dataNascimento = funcionario.dataNascimento;
-                        element.cpf = funcionario.cpf;
-                        element.cnpj = funcionario.cnpj;
-                        encontrado = true;
-                    }
-                });
-                if (encontrado) {
-                    return 1;
-                } 
-                return 0;
+                this.funcionarioRepository.save(funcionario);
             } catch (error) {
                 throw new Error("Falha ao atualizar o Funcionário!");
             }
         }
       
-            async delete(funcionarioId: number): Promise<number> {
+            async delete(funcionarioCnpj: number): Promise<number> {
               try {
-                  var encontrado = false;
-                  this.funcionarioDB.forEach(element => {
-                      if (element.id == funcionarioId) {
-                          this.funcionarioDB.splice(this.funcionarioDB.indexOf(element), 1);
-                          encontrado = true;
-                      }
-                  });
-                  if (encontrado) {
+                  const funcionarioEncontrado = await this.funcionarioRepository.findOneBy({cnpj: funcionarioCnpj});
+                                  
+                  if (funcionarioEncontrado) {
+                    this.funcionarioRepository.remove(funcionarioEncontrado);
                       return 1;
                   } 
                   return 0;
@@ -79,15 +57,7 @@ class FuncionarioRepository {
                   throw new Error("Falha ao deletar o Funcionário!");
               }
           }
-          async deleteAll(): Promise<number> {
-            try {
-                let num = this.funcionarioDB.length;
-                this.funcionarioDB.splice(0, this.funcionarioDB.length);
-                return num;
-            } catch (error) {
-                throw new Error("Falha ao deletar todos os Funcionários!");
-            }
-        }
+         
 
 }
 

@@ -1,5 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import Server from "./src/index";
+import "reflect-metadata";
+
 
 const app: Application = express();
 const server: Server = new Server(app);

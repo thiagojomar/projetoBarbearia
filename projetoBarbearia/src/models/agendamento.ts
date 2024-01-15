@@ -1,57 +1,38 @@
-import { funcionario } from "./funcionario";
-import { Pessoa } from "./pessoa";
-import { Itens } from "./itens";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToOne,
+    JoinColumn,
+    OneToMany,
+    ManyToOne,
+} from 'typeorm'; 
+import { Pessoa } from './pessoa';
+import { Funcionario } from './funcionario';
+import { Item } from './itens';
 
+
+
+@Entity()
 export class Agendamento {
-    id: number;
-    cliente: Pessoa;
-    barbeiro: funcionario;
-    data: Date;
-    valorTotal: number;
-    detalhamento: Array<Itens>;
-    published?: boolean;
+  @PrimaryGeneratedColumn()
+  idAgendamento!: number;
 
-    constructor(id: number, cliente: Pessoa, barbeiro: funcionario, data: Date, valorTotal: number, detalhamento: Array<Itens>) {
-        this.id = id;
-        this.cliente = cliente;
-        this.barbeiro = barbeiro;
-        this.data = data;
-        this.valorTotal = 0;
-        this.detalhamento = new Array<Itens>();
-    }
+  @Column({ type: 'date', nullable: false })
+  data!: string;
 
-    public toString(): string {
-        return this.cliente + ' - ' + this.barbeiro;
-    }
+  @Column({ nullable: false })
+  valor!: number;
 
-    public addServico(itens: Itens): void {
-        this.valorTotal += (itens.getValor() * itens.getQuantidade());
-        this.detalhamento.push(itens);
-    }
+  @ManyToOne(() => Item, (item) => item.agendamentos)
+  @JoinColumn({ name: 'Itens_idItens' })
+  itens!: Item[];
 
-    getID(): number { 
-        return this.id;
-    }
+  @OneToOne(() => Pessoa, (pessoa) => pessoa.agendamento)
+  @JoinColumn({ name: 'Pessoa_cpf' })
+  pessoa!: Pessoa;
 
-    getCliente(): object {
-        return this.cliente;
-    }
-
-    getBarbeiro(): object {
-        return this.barbeiro;
-    }
-
-    getData(): Date {
-        return this.data;
-    }
-
-    getValor(): number {
-        return this.valorTotal;
-    }
-
-    getDetalhamento(): Array<Itens> {
-        return this.detalhamento;
-    }
-
+  @OneToOne(() => Funcionario, (funcionario) => funcionario.agendamento)
+  @JoinColumn({ name: 'Funcionario_cnpj' })
+  funcionario!: Funcionario;
 }
-

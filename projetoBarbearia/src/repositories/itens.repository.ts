@@ -1,91 +1,64 @@
-import { Itens } from "../models/itens";
+import { Item } from "../models/itens";
+import { AppDataSource } from "../db/data-source";
 
 class ItensRepository {
-    itensDB = new Array<Itens>();
+    
+    itensRepository = AppDataSource.getRepository(Item)
 
-    async save(item: Itens): Promise<Itens> {
+    async save(item: Item): Promise<Item> {
         try {
-            this.itensDB.push(item);
-            return item
+            console.log(item);
+            this.itensRepository.save(item);
+            return item;
         } catch (erro) {
-            throw new Error("Falha ao criar item.")
+            throw new Error("Falha ao criar item. aqui")
         }
     }
 
-    async retrieveAll(): Promise<Array<Itens>> {
+    async retrieveAll(): Promise<Array<Item>> {
         try {
-            return this.itensDB;
+            return this.itensRepository.find();
         } catch (erro) {
             throw new Error("Falha ao retornar itens.");
         }
     }
-//atualização
-async retrieveById(itemId: number): Promise<Itens | null> {
-  try {
-      var encontrado = false;
-      var itemEncontrado = null;
-      this.itensDB.forEach(element => {            
-          if (element.id == itemId) {
-            itemEncontrado = element;
-              encontrado = true;
-          }
-      });
-      if (encontrado) {
-          return itemEncontrado;
-      } 
-      return null;         
-  } catch (error) {
-      throw new Error("Falha ao buscar o Item!");
-  }
-}
-
-    async update(item: Itens): Promise<number> {
-      const { id, nome, valor, quantidade, published } = item;
-      try {
-          var encontrado = false;
-          this.itensDB.forEach(element => {
-              if (element.id == item.id) {
-                  element.nome = item.nome;
-                  element.valor = item.valor;
-                  element.quantidade = item.quantidade;
-                  encontrado = true;
-              }
-          });
-          if (encontrado) {
-              return 1;
-          } 
-          return 0;
-      } catch (error) {
-          throw new Error("Falha ao atualizar o Item!");
-      }
-  }
-
-      async delete(itemId: number): Promise<number> {
+    //atualização
+    async retrieveById(itemId: number): Promise<Item | null> {
         try {
-            var encontrado = false;
-            this.itensDB.forEach(element => {
-                if (element.id == itemId) {
-                    this.itensDB.splice(this.itensDB.indexOf(element), 1);
-                    encontrado = true;
-                }
-            });
-            if (encontrado) {
+            var itemEncontrado = this.itensRepository.findOneBy({id: itemId}); //
+            
+            if (itemEncontrado) {
+                return itemEncontrado;
+            }
+            return null;
+        } catch (error) {
+            throw new Error("Falha ao buscar o Item!");
+        }
+    }
+
+    async update(item: Item) {
+        const { id, nome, valor, quantidade } = item;
+        try {
+            this.itensRepository.update(id, {nome, valor, quantidade})
+           
+        } catch (error) {
+            throw new Error("Falha ao atualizar o Item!");
+        }
+    }
+
+    async delete(itemId: number): Promise<number> {
+        try {
+            const itemEncontrado = await this.itensRepository.findOneBy({id: itemId}); 
+            if (itemEncontrado) {
+                this.itensRepository.delete(itemEncontrado)
                 return 1;
-            } 
+            }
             return 0;
         } catch (error) {
             throw new Error("Falha ao deletar o Item!");
         }
     }
-    async deleteAll(): Promise<number> {
-      try {
-          let num = this.itensDB.length;
-          this.itensDB.splice(0, this.itensDB.length);
-          return num;
-      } catch (error) {
-          throw new Error("Falha ao deletar todos os Itens!");
-      }
-  }
+    
 
 }
 

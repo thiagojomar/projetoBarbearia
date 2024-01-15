@@ -1,54 +1,33 @@
-export class Pessoa{
-    id: number;
-    nome: string;
-    telefone: string;
-    dataNascimento: string;
-    cpf: string;
-    published?: boolean;
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToOne,
+    JoinColumn,
+    OneToMany,
+    ManyToOne,
+} from 'typeorm';
+import { Agendamento } from './agendamento';
 
-    constructor(id: number, nome: string, telefone: string, dataNascimento: string, cpf: string) {
-        this.id = id;
-        this.nome = nome;
-        this.telefone = telefone;
-        this.dataNascimento = dataNascimento;
-        this.cpf = cpf;
-        
-    }
 
-    public toString(): string {
-        return `Nome: ${this.nome} - Telefone: ${this.telefone} - Data de Nascimento: ${this.dataNascimento} - CPF: ${this.cpf}`;
-    }
+@Entity()
+export class Pessoa {
+    @PrimaryGeneratedColumn()
+    cpf!: number;
 
-    getID(): number {
-        return this.id;
-    }
+    @Column({ length: 60, nullable: false })
+    nome!: string;
 
-    getNome(): string {
-        return this.nome;
-    }
+    @Column({ length: 45, nullable: false })
+    telefone!: string;
 
-    setNome(nome: string): void {
-        this.nome = nome;
-    }
+    @Column({ length: 45, nullable: false })
+    dataNascimento!: string;
 
-    getTelefone(): string {
-        return this.telefone;
-    }
+    @OneToOne(() => Agendamento, (agendamento) => agendamento.pessoa)
+    @JoinColumn({ name: 'Pessoa_cpf' })
+    agendamento!: Agendamento;
 
-    setTelefone(telefone: string): void {
-        this.telefone = telefone;
-    }
-
-    getdataNascimento(): string {
-        return this.dataNascimento;
-    }
-
-    setdataNascimento(dataNascimento: string): void{
-        this.dataNascimento = dataNascimento;
-    }
-
-    getCPF(): string {
-        return this.cpf;
-    }
-
+    
 }
+
